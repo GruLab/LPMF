@@ -27,6 +27,7 @@ class RESTClient(unittest.TestCase):
             line += 1
             self.driver.implicitly_wait(5)
             wservice = "http://10.208.11.96:8080/transformer.gistconnect.in/segments?passkey=051def518d82001232c05afcc128ba6a&url="
+            print(wservice+wservice.join(row))
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/a").click()
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/ul/li[3]/a").click()
             self.driver.find_element_by_xpath(".//*[@id='request-form']/form/span[1]/a/i").click()
@@ -42,8 +43,11 @@ class RESTClient(unittest.TestCase):
             with open(loc, 'w', encoding="utf-8") as f:
                 f.write(wservice.join(row)+"\n")
                 temp = self.driver.find_element_by_xpath(".//*[@id='response-body-raw']/pre").text
-                data = json.loads(temp)
-                f.write(data['op_segment'])
+                if temp != "gist-akulkarni":
+                    data = json.loads(temp)
+                    f.write(data['op_segment'])
+                else:
+                    f.write(temp)
             time.sleep(2)
             self.driver.refresh()
 
