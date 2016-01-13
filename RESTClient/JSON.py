@@ -11,6 +11,7 @@ class RESTClient(unittest.TestCase):
     driver = None
 
     def setUp(self):
+        # For Mac/Linux, you've to change this Profile Location.
         profile = webdriver.FirefoxProfile(
             "C:/Users/kaniskan/AppData/Roaming/Mozilla/Firefox/Profiles/rmnuc28u.default")
         self.driver = webdriver.Firefox(profile)
@@ -18,6 +19,7 @@ class RESTClient(unittest.TestCase):
         self.driver.get("chrome://restclient/content/restclient.html")
 
     def test_URL(self):
+        # Read the CSV File
         data_file = open("input.csv", "r")
         read = csv.reader(data_file)
         line = 0
@@ -32,11 +34,13 @@ class RESTClient(unittest.TestCase):
             self.driver.find_element_by_xpath(".//*[@id='request-url']").send_keys(wservice+wservice.join(row))
             self.driver.implicitly_wait(5)
             self.driver.find_element_by_xpath(".//*[@id='request-button']").click()
-            self.driver.implicitly_wait(5)
+            time.sleep(11)
             self.driver.find_element_by_xpath(".//*[@id='response-tabs']/li[2]/a").click()
             time.sleep(5)
+            # For Mac/Linux, Change your preferred location.
             loc = "F:\\" + str(line) + ".txt"
             with open(loc, 'w', encoding="utf-8") as f:
+                f.write(wservice.join(row)+"\n")
                 temp = self.driver.find_element_by_xpath(".//*[@id='response-body-raw']/pre").text
                 data = json.loads(temp)
                 f.write(data['op_segment'])
