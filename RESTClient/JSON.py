@@ -1,7 +1,9 @@
 import unittest
+import os
 import csv
 import time
 import json
+import re
 from selenium import webdriver
 
 __author__ = 'Kan!skA'
@@ -17,6 +19,7 @@ class RESTClient(unittest.TestCase):
         self.driver = webdriver.Firefox(profile)
         self.driver.maximize_window()
         self.driver.get("chrome://restclient/content/restclient.html")
+        os.mkdir("out")
 
     def test_URL(self):
         # Read the CSV File
@@ -26,28 +29,28 @@ class RESTClient(unittest.TestCase):
         for row in read:
             line += 1
             self.driver.implicitly_wait(5)
-            wservice = "http://10.208.11.96:8080/transformer.gistconnect.in/segments?passkey=051def518d82001232c05afcc128ba6a&url="
-            print(wservice+wservice.join(row))
+            wservice = "http://10.208.11.96:8080/transformer.gistconnect.in/" \
+                       "segments?passkey=051def518d82001232c05afcc128ba6a&url="
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/a").click()
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/ul/li[3]/a").click()
             self.driver.find_element_by_xpath(".//*[@id='request-form']/form/span[1]/a/i").click()
             self.driver.find_element_by_xpath(".//*[@id='request-method-list']/li[2]/a").click()
-            self.driver.find_element_by_xpath(".//*[@id='request-url']").send_keys(wservice+wservice.join(row))
+            self.driver.find_element_by_xpath(".//*[@id='request-url']").send_keys(wservice + wservice.join(row))
             self.driver.implicitly_wait(5)
             self.driver.find_element_by_xpath(".//*[@id='request-button']").click()
             time.sleep(11)
             self.driver.find_element_by_xpath(".//*[@id='response-tabs']/li[2]/a").click()
             time.sleep(5)
-            # For Mac/Linux, Change your preferred location.
-            loc = "F:\\" + str(line) + ".txt"
+            loc = "out/" + str(line) + ".txt"
             with open(loc, 'w', encoding="utf-8") as f:
-                f.write(wservice.join(row)+"\n")
+                f.write(wservice.join(row) + "\n")
                 temp = self.driver.find_element_by_xpath(".//*[@id='response-body-raw']/pre").text
-                if temp != "gist-akulkarni":
+                if temp == "gist-akulkarni" or temp == "Connection refused" \
+                        or re.search("http://", temp):
+                    f.write("Wrong URL")
+                else:
                     data = json.loads(temp)
                     f.write(data['op_segment'])
-                else:
-                    f.write(temp)
             time.sleep(2)
             self.driver.refresh()
 
