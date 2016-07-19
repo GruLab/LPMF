@@ -29,12 +29,8 @@ class RESTClient(unittest.TestCase):
         for row in read:
             line += 1
             self.driver.implicitly_wait(5)
-<<<<<<< HEAD
             wservice = "http://10.208.11.96:8080/transformer.gistconnect.in/" \
                        "segments?passkey=051def518d82001232c05afcc128ba6a&url="
-=======
-            wservice = "http://10.208.11.96:8080/transformer.gistconnect.in/segments?passkey=051def518d82001232c05afcc128ba6a&url="
->>>>>>> parent of 48c9cb5... Build2
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/a").click()
             self.driver.find_element_by_xpath("html/body/div[1]/div/div/div/ul[1]/li[3]/ul/li[3]/a").click()
             self.driver.find_element_by_xpath(".//*[@id='request-form']/form/span[1]/a/i").click()
@@ -49,17 +45,12 @@ class RESTClient(unittest.TestCase):
             with open(loc, 'w', encoding="utf-8") as f:
                 f.write(wservice.join(row) + "\n")
                 temp = self.driver.find_element_by_xpath(".//*[@id='response-body-raw']/pre").text
-<<<<<<< HEAD
                 if temp == "gist-akulkarni" or temp == "Connection refused" \
                         or re.search("http://", temp):
                     f.write("Wrong URL")
                 else:
                     data = json.loads(temp)
                     f.write(data['op_segment'])
-=======
-                data = json.loads(temp)
-                f.write(data['op_segment'])
->>>>>>> parent of 48c9cb5... Build2
             time.sleep(2)
             self.driver.refresh()
 
